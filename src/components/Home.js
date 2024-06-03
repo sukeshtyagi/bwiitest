@@ -6,8 +6,9 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 function Home() {
   const [products, setProducts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All Products");
 
   useEffect(() => {
     async function getData() {
@@ -26,18 +27,25 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    console.log("object")
-    if (searchQuery) {
-    }
-    const filtered = products.filter((product) =>
+    let filtered = products.filter((product) =>
       product.title.toLowerCase().includes(searchQuery)
     );
-    setProducts(filtered);
-  }, [searchQuery]);
+
+    if (selectedCategory !== "All Products") {
+      filtered = filtered.filter(
+        (product) => product.category === selectedCategory
+      );
+    }
+
+    setFilteredProducts(filtered);
+  }, [searchQuery, selectedCategory, products]);
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value.toLowerCase());
-    console.log(searchQuery)
+  };
+
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
   };
 
   const navigate = useNavigate();
@@ -47,16 +55,30 @@ function Home() {
         All Products
       </h1>
       <div className="searchContainer box-border w-fit mx-auto bg-red-500 flex justify-start gap-10 items-center p-1">
-        <div className="box-border bg-white pl-2">
-          <FontAwesomeIcon icon={faMagnifyingGlass} />
+        <div className="box-border bg-white pl-2 flex justify-start items-center">
+          <FontAwesomeIcon
+            icon={faMagnifyingGlass}
+            className="box-border text-gray-500 w-6 h-5"
+          />
           <input
             type="text"
             placeholder="Search"
-            className="searchInput ml-1"
+            className="searchInput ml-1 px-2"
             onChange={handleSearch}
           />
         </div>
-        <input type="text" placeholder="Search" className="filterInput" />
+        <select
+          name=""
+          id=""
+          className="box-border px-2 py-1"
+          onChange={handleCategoryChange}
+        >
+          <option value="All Products">All Products</option>
+          <option value="men's clothing">Men's clothing</option>
+          <option value="women's clothing">Women's clothing</option>
+          <option value="jewelery">Jewellery</option>
+          <option value="electronics">Electronics</option>
+        </select>
       </div>
       {filteredProducts.map((product) => (
         <div
